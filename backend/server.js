@@ -6,7 +6,10 @@ const PORT = 3005;
 app.use(cors());
 
 app.get('/helloworld', (req, res) => {
-  res.json({ message: 'Hello World from UniHub!' });
+  // add current time to the message
+  const time = new Date().toLocaleTimeString();
+  
+  res.json({ message: `Msg from backend at ${time}: Hello, world!` });
 });
 
 app.listen(PORT, () => {
