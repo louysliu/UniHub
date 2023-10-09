@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import HelloWorld from '../views/HelloWorld.vue'
+import HelloView from '../views/HelloView.vue'
 
 const routes = [
   {
@@ -18,8 +18,8 @@ const routes = [
   },
   {
     path: '/test/hello',
-    name: 'HelloWorld',
-    component: HelloWorld
+    name: 'hello',
+    component: HelloView
   }
 ]
 
