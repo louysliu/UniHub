@@ -5,7 +5,7 @@ const PORT = 3005;
 
 app.use(cors());
 
-app.get('/helloworld', (req, res) => {
+app.get('/api/hello', (req, res) => {
   // add current time to the message
   const time = new Date().toLocaleTimeString();
   
