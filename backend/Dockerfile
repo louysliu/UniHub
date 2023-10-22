@@ -17,4 +17,4 @@ ENV PORT=3005
 EXPOSE 3005
 
 # Run the application
-CMD [ "node", "server.js" ]
+CMD [ "/bin/sh", "init.sh" ]
