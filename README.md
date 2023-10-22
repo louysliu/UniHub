@@ -41,7 +41,7 @@ docker compose up -d
 docker exec -it CONTAINER /bin/bash
 ```
 
-其中CONTAINER是容器名，
+其中CONTAINER是容器名，可以使用`docker ps`命令查看，位于NAMES一栏中。
 
 ### 停止容器
 
