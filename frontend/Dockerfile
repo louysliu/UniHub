@@ -1,13 +1,13 @@
 # Use an official Node runtime as a build image
 FROM node:18 as build-stage
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
 # Copy project files to the working directory
 COPY . .
 
-# Install dependencies
+# Install dependencies and build
 RUN npm install && npm run build
 
 # Use nginx for the production environment
