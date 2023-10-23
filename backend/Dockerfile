@@ -10,11 +10,11 @@ COPY . .
 # Install dependencies
 RUN npm install
 
-# Define the environment variable for the app to run on
-ENV PORT=3005
-
 # Make port 3005 available outside the container
 EXPOSE 3005
+
+# set this environment variable to enable debugging
+ENV DEBUG=express:*
 
 # Run the application
 CMD [ "/bin/sh", "init.sh" ]
