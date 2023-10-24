@@ -3,6 +3,7 @@ services:
     build: ./backend
     ports:
       - "${BACKEND_PORT}:3005"
+      - "${BACKEND_INSPECT_PORT}:9229"
     environment:
       - MYSQL_HOST=mysql
       - MYSQL_USER=root
