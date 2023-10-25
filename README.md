@@ -2,7 +2,7 @@
 以下假定你已经安装了最新版本的Docker。如果没有，请前往[官网](https://www.docker.com/get-started/)下载并安装。
 
 ### 克隆仓库
-```bash
+```sh
 git clone https://github.com/louix33/UniHub.git
 ```
 
@@ -13,6 +13,7 @@ git clone https://github.com/louix33/UniHub.git
 - MYSQL_PORT：MySQL容器在主机上映射的端口号。
 - MYSQL_DATABASE：本项目使用的MySQL数据库名称。MySQL镜像构建时会自动创建这个数据库，无需再手动创建。
 - BACKEND_HOST和BACKEND_PORT：后端的主机名和端口。前端需要这一信息以获知后端API的URL。
+- BACKEND_INSPECT_PORT：Node.js Inspector监听的端口。用于调试后段代码。
 - FRONTEND_PORT：前端监听的端口号。
 
 务必注意，请不要将密码等敏感信息提交到Git仓库中。
@@ -50,3 +51,27 @@ docker exec -it CONTAINER /bin/bash
 docker compose down
 ```
 
+
+
+## Debug指引
+
+### 后端
+
+Node.js自带Inspector作为Debug工具，支持断点调试等功能。
+
+#### 使用浏览器的DevTools
+
+1. 在启动后端服务器时指定inspector监听的ip地址和端口：
+
+   ```sh
+   node --inspector=0.0.0.0:9229 server.js
+   ```
+
+​	在项目启动时已经默认执行该命令（`backend/init.sh`），因此一般情况下该步骤无需手动执行。
+
+2. 打开Chromium内核的浏览器（Chrome, Edge等），在地址栏中访问"about:inspect"，打开DevTools。在DevTools的Devices>Remote Target中找到正在运行的服务器，点击"inspect"。
+3. 按Ctrl+P（MacOS为Command+P），输入需要调试的源文件在Docker中的路径（如`/app/server.js`），即可打开文件开始调试。
+
+#### 使用VSCode
+
+(todo)
