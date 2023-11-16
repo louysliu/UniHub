@@ -21,28 +21,24 @@ db.connect((err) => {
 
 app.use(cors());
 
-app.post('/api/register', (req, res) => {
-  const { username, password } = req.body;
 
-  // 检查用户名是否已存在
-  db.query('SELECT * FROM Users WHERE username = ?', [username], (err, results) => {
-    if (err) {
-      console.error('数据库查询出错: ', err);
-      res.status(500).json({ error: '服务器内部错误' });
+// 注册请求处理
+app.post('/api/register', (req, res) => {
+  const { username, email, password } = req.body;
+
+  // 在此进行用户名和邮箱的唯一性检查，可以分开查询或使用SQL语句一次查询
+  connection.query('SELECT * FROM Users WHERE username = ? OR email = ?', [username, email], (error, results) => {
+    if (error) throw error;
+
+    if (results.length > 0) {
+      res.json({ success: false, message: '用户名或邮箱已存在' });
     } else {
-      if (results.length > 0) {
-        res.json({ error: '用户名已被使用' });
-      } else {
-        // 插入新用户
-        db.query('INSERT INTO Users (username, password) VALUES (?, ?)', [username, password], (err) => {
-          if (err) {
-            console.error('注册失败: ', err);
-            res.status(500).json({ error: '服务器内部错误' });
-          } else {
-            res.json({ message: '注册成功' });
-          }
-        });
-      }
+      // 用户不存在，执行插入操作
+      connection.query('INSERT INTO Users (username, email, password) VALUES (?, ?, ?)', [username, email, password], (error, results) => {
+        if (error) throw error;
+
+        res.json({ success: true, message: '注册成功，请登录' });
+      });
     }
   });
 });
