@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3005;
 
 // create connection to database
-const db = mysql.createConnection({
+const connection = mysql.createConnection({
   host: process.env.MYSQL_HOST,
   user: 'root',
   password: 'root',
@@ -14,16 +14,19 @@ const db = mysql.createConnection({
 });
 
 // connect to database
-db.connect((err) => {
+connection.connect((err) => {
   if (err) throw err;
   console.log('Connected to MySQL database!');
 });
 
 app.use(cors());
-
+app.use(express.json());
 
 // 注册请求处理
 app.post('/api/register', (req, res) => {
+  console.log('Received data:', 'get');
+  const receivedData = req.body;
+  console.log('Received data:', receivedData);
   const { username, email, password } = req.body;
 
   // 在此进行用户名和邮箱的唯一性检查，可以分开查询或使用SQL语句一次查询
@@ -31,7 +34,7 @@ app.post('/api/register', (req, res) => {
     if (error) throw error;
 
     if (results.length > 0) {
-      res.json({ success: false, message: '用户名或邮箱已存在' });
+      res.status(401).json({ success: false, message: '用户名或邮箱已存在' });
     } else {
       // 用户不存在，执行插入操作
       connection.query('INSERT INTO Users (username, email, password) VALUES (?, ?, ?)', [username, email, password], (error, results) => {
@@ -48,7 +51,7 @@ app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 
   // 查询用户是否存在
-  db.query('SELECT * FROM Users WHERE username = ?', [username], (err, results) => {
+  connection.query('SELECT * FROM Users WHERE username = ?', [username], (err, results) => {
     if (err) {
       console.error('数据库查询出错: ', err);
       res.status(500).json({ error: '服务器内部错误' });
@@ -63,7 +66,7 @@ app.post('/api/login', (req, res) => {
           
           // 将session信息存储到数据库中
           const userId = results[0].user_id;
-          db.query('INSERT INTO Sessions (session_id, user_id) VALUES (?, ?)', [sessionId, userId], (err) => {
+          connection.query('INSERT INTO Sessions (session_id, user_id) VALUES (?, ?)', [sessionId, userId], (err) => {
             if (err) {
               console.error('存储session信息出错: ', err);
               res.status(500).json({ error: '服务器内部错误' });
@@ -84,7 +87,7 @@ const authenticateSession = (req, res, next) => {
   const { username, sessionId } = req.body;
 
   // 查询数据库验证session信息
-  db.query('SELECT * FROM user_sessions WHERE username = ? AND session_id = ?', [username, sessionId], (err, results) => {
+  connection.query('SELECT * FROM user_sessions WHERE username = ? AND session_id = ?', [username, sessionId], (err, results) => {
     if (err) {
       console.error('数据库查询出错: ', err);
       res.status(500).json({ error: '服务器内部错误' });
