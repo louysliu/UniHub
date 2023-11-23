@@ -4,6 +4,8 @@
     <span>{{ usernameAvailability }}</span>
     <input v-model="email" placeholder="邮箱" @input="checkEmail">
     <span>{{ emailAvailability }}</span>
+    <input v-model="nickname" placeholder="昵称" @input="checkNickname">
+    <span>{{ usernameAvailability }}</span>
     <input v-model="password" type="password" placeholder="密码">
     <input v-model="confirmPassword" type="password" placeholder="确认密码">
     <button @click="registerUser">确认</button>
@@ -23,6 +25,7 @@ export default {
     return {
       username: '',
       email: '',
+      nickname: '',
       password: '',
       confirmPassword: '',
       usernameAvailability: '',
@@ -36,6 +39,7 @@ export default {
           username: this.username,
           email: this.email,
           password: this.password,
+          nickname: this.nickname,
           // 可以将其他需要的数据传递到后端
         });
 
@@ -45,6 +49,7 @@ export default {
           this.username = '';
           this.email = '';
           this.password = '';
+          this.nickname = '';
           this.confirmPassword = '';*/
           // 注册成功，显示成功提示框
           this.showSuccessModal = true;

@@ -27,7 +27,7 @@ app.post('/api/register', (req, res) => {
   console.log('Received data:', 'get');
   const receivedData = req.body;
   console.log('Received data:', receivedData);
-  const { username, email, password } = req.body;
+  const { username, email, password, nickname } = req.body;
 
   // 在此进行用户名和邮箱的唯一性检查，可以分开查询或使用SQL语句一次查询
   connection.query('SELECT * FROM Users WHERE username = ? OR email = ?', [username, email], (error, results) => {
@@ -37,7 +37,7 @@ app.post('/api/register', (req, res) => {
       res.status(401).json({ success: false, message: '用户名或邮箱已存在' });
     } else {
       // 用户不存在，执行插入操作
-      connection.query('INSERT INTO Users (username, email, password) VALUES (?, ?, ?)', [username, email, password], (error, results) => {
+      connection.query('INSERT INTO Users (username, email, password, name) VALUES (?, ?, ?, ?)', [username, email, password, nickname], (error, results) => {
         if (error) throw error;
 
         res.json({ success: true, message: '注册成功，请登录' });
@@ -47,11 +47,14 @@ app.post('/api/register', (req, res) => {
 });
 
 // 登录接口
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
+app.post('/api/userlogin', (req, res) => {
+  console.log('Received data:', 'get');
+  const receivedData = req.body;
+  console.log('Received data:', receivedData);
+  const { usernameOrEmail, password } = req.body;
 
   // 查询用户是否存在
-  connection.query('SELECT * FROM Users WHERE username = ?', [username], (err, results) => {
+  connection.query('SELECT * FROM Users WHERE username = ? OR email = ?', [usernameOrEmail, usernameOrEmail], (err, results) => {
     if (err) {
       console.error('数据库查询出错: ', err);
       res.status(500).json({ error: '服务器内部错误' });
@@ -71,7 +74,7 @@ app.post('/api/login', (req, res) => {
               console.error('存储session信息出错: ', err);
               res.status(500).json({ error: '服务器内部错误' });
             } else {
-              res.json({ message: '登录成功', sessionId });
+              res.status(200).json({ message: '登录成功', sessionId });
             }
           });
         } else {
@@ -82,7 +85,7 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-// 保持用户会话的中间件
+/* 保持用户会话的中间件
 const authenticateSession = (req, res, next) => {
   const { username, sessionId } = req.body;
 
@@ -105,6 +108,7 @@ const authenticateSession = (req, res, next) => {
 app.get('/api/protected', authenticateSession, (req, res) => {
   res.json({ message: '这是一个需要身份验证的路由' });
 });
+*/
 
 app.get('/api/hello', (req, res) => {
   // add current time to the message

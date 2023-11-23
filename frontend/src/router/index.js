@@ -4,6 +4,7 @@ import HelloView from '../views/HelloView.vue'
 import UnihubHome from '../views/UnihubHome.vue'
 import UserLogin from '../views/UserLogin.vue'
 import NewRegister from '../views/NewRegister.vue'
+import UserHome from '../views/UserHome.vue'
 
 const routes = [
   {
@@ -27,6 +28,7 @@ const routes = [
   {path: '/home/unihubhome', name: 'unihubhome',component: UnihubHome},
   {path: '/home/userlogin', name: 'userlogin', component: UserLogin},
   {path: '/home/newregister', name: 'newregister', component : NewRegister},
+  {path: '/home/userhome', name: 'userhome', component : UserHome},
 ]
 
 const router = createRouter({

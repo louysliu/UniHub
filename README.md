@@ -1,4 +1,16 @@
 ## 如何运行
+### mongodb
+```sh
+sudo systemctl start mongod
+```
+```sh
+sudo systemctl status mongod
+```
+
+```sh
+mongosh -u root -p root --authenticationDatabase admin
+```
+
 ### backend
 ```sh
 nodemon server.js
@@ -10,3 +22,5 @@ npm run serve
 ```
 
 ### mysql2
+
+### mongoose

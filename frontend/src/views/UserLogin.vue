@@ -3,8 +3,65 @@
     <input v-model="usernameOrEmail" placeholder="用户名或邮箱">
     <input v-model="password" type="password" placeholder="密码">
     <button @click="login">确认</button>
+    <div v-if="showSuccessModal" class="success-modal">
+      登录成功！
+    </div>
   </div>
 </template>
+
+<script>
+import axios from 'axios';
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:3005' // 请将端口号和域名替换为您的后端地址
+});
+export default {
+  data() {
+    return {
+      usernameOrEmail: '',
+      password: '',
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        const response = await axiosInstance.post('/api/userlogin', {
+          usernameOrEmail: this.usernameOrEmail,
+          password: this.password,
+          // 可以将其他需要的数据传递到后端
+        });
+
+        if (response.status === 200) {
+          /*this.registrationMessage = response.data.message;
+          // 登录成功后重置表单字段
+          this.username = '';
+          this.email = '';
+          this.password = '';
+          this.nickname = '';
+          this.confirmPassword = '';*/
+          // 登录成功，显示成功提示框
+          this.showSuccessModal = true;
+
+          // 等待一段时间后跳转到另一个页面
+          setTimeout(() => {
+            // 这里可以使用 Vue Router 的方式跳转到另一个页面
+            // 如果您使用的是 Vue Router，请使用下面类似的方式：
+            // this.$router.push('/other-page');
+            // 如果不是使用 Vue Router，可以使用以下方式：
+            window.location.href = '/#/home/userhome';
+          }, 100); // 3000毫秒后跳转，这里可以根据需要调整时间
+        } else {
+          // 处理错误消息
+          // ...
+          this.loginMessage = '登录失败，请稍后重试';
+        }
+      } catch (error) {
+        console.error('登录失败: ', error);
+        this.loginMessage = '登录失败，请稍后重试';
+      }
+    }
+  }
+};
+</script>
 
 <style scoped>
   /* 样式可以根据需要自行修改 */
@@ -35,5 +92,15 @@
     background-color: #007bff; /* 设置按钮背景颜色 */
     color: white; /* 设置按钮文字颜色 */
     cursor: pointer; /* 设置鼠标样式为指针 */
+  }
+  .success-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
 </style>
