@@ -24,3 +24,7 @@ npm run serve
 ### mysql2
 
 ### mongoose
+```sh
+sudo systemctl start mongod
+sudo systemctl status mongod
+```
