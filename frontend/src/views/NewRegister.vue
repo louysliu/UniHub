@@ -4,8 +4,7 @@
     <span>{{ usernameAvailability }}</span>
     <input v-model="email" placeholder="邮箱" @input="checkEmail">
     <span>{{ emailAvailability }}</span>
-    <input v-model="nickname" placeholder="昵称" @input="checkNickname">
-    <span>{{ usernameAvailability }}</span>
+    <input v-model="nickname" placeholder="昵称">
     <input v-model="password" type="password" placeholder="密码">
     <input v-model="confirmPassword" type="password" placeholder="确认密码">
     <button @click="registerUser">确认</button>
@@ -18,7 +17,7 @@
 <script>
 import axios from 'axios';
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3005' // 请将端口号和域名替换为您的后端地址
+  baseURL: 'http://localhost:3005' // 端口号和域名为后端地址
 });
 export default {
   data() {
@@ -29,10 +28,55 @@ export default {
       password: '',
       confirmPassword: '',
       usernameAvailability: '',
-      emailAvailability: ''
+      emailAvailability: '',
+      showSuccessModal: false
     };
   },
   methods: {
+    async checkUsername() {
+      if (!this.username.trim()) {
+        this.usernameAvailability = '必填';
+        return;
+      }
+
+      try {
+        const response = await axiosInstance.post('/api/checkUsername', {
+          username: this.username
+        });
+        
+        if (response.data.available) {
+          this.usernameAvailability = '可用的用户名';
+        } 
+        else {
+          this.usernameAvailability = '已被注册的用户名';
+        }
+      } catch (error) {
+        console.error('检查用户名失败: ', error);
+        this.usernameAvailability = '检查失败，请稍后重试';
+      }
+    },
+    async checkEmail() {
+      if (!this.email.trim()) {
+        this.emailAvailability = '必填';
+        return;
+      }
+
+      try {
+        const response = await axiosInstance.post('/api/checkEmail', {
+          email: this.email
+        });
+        
+        if (response.data.available) {
+          this.emailAvailability = '可用的邮箱';
+        } 
+        else {
+          this.emailAvailability = '已被注册的邮箱';
+        }
+      } catch (error) {
+        console.error('检查邮箱失败: ', error);
+        this.emailAvailability = '检查失败，请稍后重试';
+      }
+    },
     async registerUser() {
       try {
         const response = await axiosInstance.post('/api/register', {
@@ -40,17 +84,9 @@ export default {
           email: this.email,
           password: this.password,
           nickname: this.nickname,
-          // 可以将其他需要的数据传递到后端
         });
 
         if (response.status === 200) {
-          /*this.registrationMessage = response.data.message;
-          // 注册成功后重置表单字段
-          this.username = '';
-          this.email = '';
-          this.password = '';
-          this.nickname = '';
-          this.confirmPassword = '';*/
           // 注册成功，显示成功提示框
           this.showSuccessModal = true;
 
@@ -60,8 +96,8 @@ export default {
             // 如果您使用的是 Vue Router，请使用下面类似的方式：
             // this.$router.push('/other-page');
             // 如果不是使用 Vue Router，可以使用以下方式：
-            window.location.href = '/#/home/userlogin';
-          }, 100); // 3000毫秒后跳转，这里可以根据需要调整时间
+            window.location.href = '/#/home/login';
+          }, 300); // 300毫秒后跳转，这里可以根据需要调整时间
         } else {
           // 处理错误消息
           // ...

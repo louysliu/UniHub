@@ -1,89 +1,27 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2');
+const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+
+const registerRouter = require('./register');
+const loginRouter = require('./login');
+const userIdRouter = require('./userId');
+const connection = require('./db');
+const checkUsername = require('./checkUsername');
+const checkEmail = require('./checkEmail');
 
 const app = express();
 const PORT = 3005;
 
-// create connection to database
-const connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  user: 'root',
-  password: 'root',
-  database: 'unihub',
-});
-
-// connect to database
-connection.connect((err) => {
-  if (err) throw err;
-  console.log('Connected to MySQL database!');
-});
-
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-// 注册请求处理
-app.post('/api/register', (req, res) => {
-  console.log('Received data:', 'get');
-  const receivedData = req.body;
-  console.log('Received data:', receivedData);
-  const { username, email, password, nickname } = req.body;
-
-  // 在此进行用户名和邮箱的唯一性检查，可以分开查询或使用SQL语句一次查询
-  connection.query('SELECT * FROM Users WHERE username = ? OR email = ?', [username, email], (error, results) => {
-    if (error) throw error;
-
-    if (results.length > 0) {
-      res.status(401).json({ success: false, message: '用户名或邮箱已存在' });
-    } else {
-      // 用户不存在，执行插入操作
-      connection.query('INSERT INTO Users (username, email, password, name) VALUES (?, ?, ?, ?)', [username, email, password, nickname], (error, results) => {
-        if (error) throw error;
-
-        res.json({ success: true, message: '注册成功，请登录' });
-      });
-    }
-  });
-});
-
-// 登录接口
-app.post('/api/userlogin', (req, res) => {
-  console.log('Received data:', 'get');
-  const receivedData = req.body;
-  console.log('Received data:', receivedData);
-  const { usernameOrEmail, password } = req.body;
-
-  // 查询用户是否存在
-  connection.query('SELECT * FROM Users WHERE username = ? OR email = ?', [usernameOrEmail, usernameOrEmail], (err, results) => {
-    if (err) {
-      console.error('数据库查询出错: ', err);
-      res.status(500).json({ error: '服务器内部错误' });
-    } else {
-      if (results.length === 0) {
-        res.json({ error: '用户不存在' });
-      } else {
-        // 比对密码
-        if (results[0].password === password) {
-          // 生成一个随机的session ID（这里简化，实际应用中应该使用更安全的方法生成session ID）
-          const sessionId = Math.random().toString(36).substring(2);
-          
-          // 将session信息存储到数据库中
-          const userId = results[0].user_id;
-          connection.query('INSERT INTO Sessions (session_id, user_id) VALUES (?, ?)', [sessionId, userId], (err) => {
-            if (err) {
-              console.error('存储session信息出错: ', err);
-              res.status(500).json({ error: '服务器内部错误' });
-            } else {
-              res.status(200).json({ message: '登录成功', sessionId });
-            }
-          });
-        } else {
-          res.json({ error: '密码错误' });
-        }
-      }
-    }
-  });
-});
+app.use('/api/register', registerRouter);
+app.use('/api/login', loginRouter);
+app.use('/api/getUserData', userIdRouter);
+app.use('/api/checkUsername',checkUsername);
+app.use('/api/checkEmail', checkEmail);
 
 /* 保持用户会话的中间件
 const authenticateSession = (req, res, next) => {
@@ -113,7 +51,7 @@ app.get('/api/protected', authenticateSession, (req, res) => {
 app.get('/api/hello', (req, res) => {
   // add current time to the message
   const time = new Date().toLocaleTimeString();
-  
+
   res.json({ message: `Msg from backend at ${time}: Hello, world!` });
 });
 

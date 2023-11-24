@@ -21,7 +21,7 @@
     methods: {
       goToLogin() {
         // 导航至登录页面
-        this.$router.push('/home/userlogin');
+        this.$router.push('/home/login');
       },
       goToRegister() {
         // 导航至注册页面

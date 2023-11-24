@@ -1,5 +1,5 @@
 <template>
-  <div class="userlogin">
+  <div class="login">
     <input v-model="usernameOrEmail" placeholder="用户名或邮箱">
     <input v-model="password" type="password" placeholder="密码">
     <button @click="login">确认</button>
@@ -24,22 +24,21 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await axiosInstance.post('/api/userlogin', {
+        const response = await axiosInstance.post('/api/login', {
           usernameOrEmail: this.usernameOrEmail,
           password: this.password,
           // 可以将其他需要的数据传递到后端
         });
 
         if (response.status === 200) {
-          /*this.registrationMessage = response.data.message;
-          // 登录成功后重置表单字段
-          this.username = '';
-          this.email = '';
-          this.password = '';
-          this.nickname = '';
-          this.confirmPassword = '';*/
           // 登录成功，显示成功提示框
           this.showSuccessModal = true;
+
+          const sessionId = response.data.sessionId;
+          const expirationDate = new Date();
+          expirationDate.setDate(expirationDate.getDate() + 1);
+          const yourExpirationTime = expirationDate.toUTCString();
+          document.cookie = `sessionId=${sessionId}; expires=${yourExpirationTime}; path=/`;
 
           // 等待一段时间后跳转到另一个页面
           setTimeout(() => {
@@ -47,8 +46,8 @@ export default {
             // 如果您使用的是 Vue Router，请使用下面类似的方式：
             // this.$router.push('/other-page');
             // 如果不是使用 Vue Router，可以使用以下方式：
-            window.location.href = '/#/home/userhome';
-          }, 100); // 3000毫秒后跳转，这里可以根据需要调整时间
+            window.location.href = '/#/home/homeloading';
+          }, 100); // 100毫秒后跳转，这里可以根据需要调整时间
         } else {
           // 处理错误消息
           // ...
@@ -65,7 +64,7 @@ export default {
 
 <style scoped>
   /* 样式可以根据需要自行修改 */
-  .userlogin {
+  .login {
     display: flex;
     flex-direction: column;
     align-items: center;

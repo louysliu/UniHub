@@ -2,9 +2,10 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import HelloView from '../views/HelloView.vue'
 import UnihubHome from '../views/UnihubHome.vue'
-import UserLogin from '../views/UserLogin.vue'
+import LogIn from '../views/LogIn.vue'
 import NewRegister from '../views/NewRegister.vue'
 import UserHome from '../views/UserHome.vue'
+import HomeLoading from '../views/HomeLoading.vue'
 
 const routes = [
   {
@@ -26,9 +27,10 @@ const routes = [
     component: HelloView
   },
   {path: '/home/unihubhome', name: 'unihubhome',component: UnihubHome},
-  {path: '/home/userlogin', name: 'userlogin', component: UserLogin},
+  {path: '/home/login', name: 'login', component: LogIn},
   {path: '/home/newregister', name: 'newregister', component : NewRegister},
   {path: '/home/userhome', name: 'userhome', component : UserHome},
+  {path: '/home/homeloading', name: 'homeloading', component : HomeLoading},
 ]
 
 const router = createRouter({
