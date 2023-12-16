@@ -1,4 +1,3 @@
-<!-- UserHome.vue -->
 <template>
   <div class="userhome">
     <!-- 左侧固定侧边栏 -->
@@ -59,6 +58,7 @@ export default {
   },
   mounted() {
     // 从后端获取最近打开的文档和最近的作业数据
+    console.log(this.$store.state.userData);
     this.fetchRecentDocuments();
     this.fetchRecentAssignments();
   },

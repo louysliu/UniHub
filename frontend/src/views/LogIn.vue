@@ -19,6 +19,7 @@ export default {
     return {
       usernameOrEmail: '',
       password: '',
+      showSuccessModal: false,
     };
   },
   methods: {
@@ -47,7 +48,7 @@ export default {
             // this.$router.push('/other-page');
             // 如果不是使用 Vue Router，可以使用以下方式：
             window.location.href = '/#/home/homeloading';
-          }, 100); // 100毫秒后跳转，这里可以根据需要调整时间
+          }, 1000); // xx毫秒后跳转，这里可以根据需要调整时间
         } else {
           // 处理错误消息
           // ...

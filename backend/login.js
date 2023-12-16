@@ -7,7 +7,7 @@ router.post('/', (req, res) => {
   const receivedData = req.body;
   console.log('Received data:', receivedData);
   const { usernameOrEmail, password } = req.body;
-  
+
   // 查询用户是否存在
   connection.query('SELECT * FROM Users WHERE username = ? OR email = ?', [usernameOrEmail, usernameOrEmail], (err, results) => {
     if (err) {
@@ -24,7 +24,11 @@ router.post('/', (req, res) => {
 
           // 将session信息存储到数据库中
           const userId = results[0].user_id;
-          connection.query('INSERT INTO Sessions (session_id, user_id) VALUES (?, ?)', [sessionId, userId], (err) => {
+          
+          const insertQuery = 'INSERT INTO Sessions (session_id, user_id) VALUES (?, ?) ' +
+            'ON DUPLICATE KEY UPDATE session_id = VALUES(session_id)';
+
+          connection.query(insertQuery, [sessionId, userId], (err) => {
             if (err) {
               console.error('存储session信息出错: ', err);
               res.status(500).json({ error: '服务器内部错误' });

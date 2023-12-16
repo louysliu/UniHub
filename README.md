@@ -28,3 +28,9 @@ npm run serve
 sudo systemctl start mongod
 sudo systemctl status mongod
 ```
+
+### mongosh
+```sh
+mongosh --username unihubroot --password unihubroot --authenticationDatabase unihub
+mongosh -u root -p
+```sh
