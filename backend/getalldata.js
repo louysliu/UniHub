@@ -6,6 +6,7 @@ const mongodbConnection = require('./db2');
 router.get('/', async (req, res) => {
     try {
         const sessionFromCookie = req.cookies.sessionId;
+        console.log('Received data:', sessionFromCookie);
 
         if (!sessionFromCookie) {
             throw new Error('Session ID not found');
@@ -21,13 +22,13 @@ router.get('/', async (req, res) => {
 
         const formattedFolders = formatFoldersAndFiles(folders, files);
 
-        const userData = {
+        const UserHomeData = {
             userDataFromMySQL: userDataFromMySQL,
             userFoldersAndFiles: formattedFolders,
             recentFiles: recentFiles,
         };
 
-        res.status(200).json({ message: 'User data fetched successfully', userData });
+        res.status(200).json({ message: 'User data fetched successfully', UserHomeData });
     } catch (error) {
         console.error('Error fetching user data:', error);
         res.status(500).json({ error: error.message || 'Failed to fetch user data' });

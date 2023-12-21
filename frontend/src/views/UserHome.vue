@@ -9,13 +9,13 @@
             <img class="avatar-img" :src="userAvatar" alt="User Avatar" />
           </div>
         </router-link>
-        <p class="nickname">{{ userNickname }}</p>
+        <p class="nickname">{{ userData.UserHomeData.userDataFromMySQL.nickname }}</p>
         <hr />
         <!-- 跳转按钮 -->
-        <router-link to="/file-manager">
+        <router-link to="/home/file-manager">
           <button class="sidebar-btn">File Manager</button>
         </router-link>
-        <router-link to="/ddl-manager">
+        <router-link to="/home/ddl-manager">
           <button class="sidebar-btn">DDL Manager</button>
         </router-link>
       </div>
@@ -51,10 +51,14 @@ export default {
   data() {
     return {
       userAvatar: require('../assets/logo.png'), // 用户头像路径
-      userNickname: 'User Nickname', // 用户昵称
       recentDocuments: [], // 最近打开的文件列表
       recentAssignments: [] // 最近的作业列表
     };
+  },
+  computed: {
+    userData() {
+      return this.$store.getters.getUserData;
+    }
   },
   mounted() {
     // 从后端获取最近打开的文档和最近的作业数据
@@ -65,14 +69,11 @@ export default {
   methods: {
     // 获取最近打开的文档数据（示例方法，需要根据实际情况修改）
     fetchRecentDocuments() {
-      // 使用axios或其他方法从后端获取数据，并赋值给recentDocuments数组
-      this.recentDocuments = [
-        { id: 1, name: 'Document 1' },
-        { id: 2, name: 'Document 2' },
-        { id: 3, name: 'Document 3' },
-        { id: 4, name: 'Document 4' },
-        { id: 5, name: 'Document 5' }
-      ];
+      const recentFiles = this.userData.UserHomeData.recentFiles;
+        this.recentDocuments = recentFiles.map(file => ({
+            id: file.file_id,
+            name: file.file_name
+        }));
     },
     // 获取最近的作业数据（示例方法，需要根据实际情况修改）
     fetchRecentAssignments() {
@@ -84,11 +85,6 @@ export default {
         { id: 4, title: 'Assignment 4', dueDate: '2023-11-28' },
         { id: 5, title: 'Assignment 5', dueDate: '2023-11-30' }
       ];
-    },
-    // 跳转到PersonInfo页面
-    goToPersonInfo() {
-      // 在此编写路由跳转的逻辑
-      // 例如：this.$router.push('/person-info');
     }
   }
 };

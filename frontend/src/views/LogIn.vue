@@ -12,7 +12,8 @@
 <script>
 import axios from 'axios';
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3005' // 请将端口号和域名替换为您的后端地址
+  baseURL: 'http://localhost:3005', // 请将端口号和域名替换为您的后端地址
+  withCredentials: true
 });
 export default {
   data() {
@@ -41,14 +42,23 @@ export default {
           const yourExpirationTime = expirationDate.toUTCString();
           document.cookie = `sessionId=${sessionId}; expires=${yourExpirationTime}; path=/`;
 
-          // 等待一段时间后跳转到另一个页面
-          setTimeout(() => {
-            // 这里可以使用 Vue Router 的方式跳转到另一个页面
-            // 如果您使用的是 Vue Router，请使用下面类似的方式：
-            // this.$router.push('/other-page');
-            // 如果不是使用 Vue Router，可以使用以下方式：
-            window.location.href = '/#/home/homeloading';
-          }, 1000); // xx毫秒后跳转，这里可以根据需要调整时间
+          // 获取用户数据
+          const userDataResponse = await axiosInstance.get('/api/getUserData');
+
+          if (userDataResponse.status === 200) {
+            const UserData = userDataResponse.data; // 假设后端返回的用户数据
+            // 存储userData到Vuex中
+            this.$store.commit('SET_USER_DATA', UserData);
+            this.$store.commit('SET_LOADING', true);
+
+            // 跳转到userhome.vue
+            setTimeout(() => {
+              this.$router.push('/home/userhome');
+            }, 1000); // 1000毫秒后跳转，这里可以根据需要调整时间 */
+          } else {
+            console.error('无法获取用户数据');
+            // 处理无法获取用户数据的情况
+          }
         } else {
           // 处理错误消息
           // ...

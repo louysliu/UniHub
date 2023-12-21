@@ -6,6 +6,8 @@ import LogIn from '../views/LogIn.vue'
 import NewRegister from '../views/NewRegister.vue'
 import UserHome from '../views/UserHome.vue'
 import HomeLoading from '../views/HomeLoading.vue'
+import FileManager from '../views/FileManager.vue'
+import DdlManager from '../views/DdlManager.vue'
 
 const routes = [
   {
@@ -31,6 +33,8 @@ const routes = [
   {path: '/home/newregister', name: 'newregister', component : NewRegister},
   {path: '/home/userhome', name: 'userhome', component : UserHome},
   {path: '/home/homeloading', name: 'homeloading', component : HomeLoading},
+  {path: '/home/file-manager', name: 'file-manager', component : FileManager},
+  {path: '/home/ddl-manager', name: 'ddl-manager', component : DdlManager},
 ]
 
 const router = createRouter({
